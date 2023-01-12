@@ -9,6 +9,7 @@ class Home extends Component {
     inputSearch: '',
     result: [],
     isEmpty: true,
+    categories: '',
   };
 
   async componentDidMount() {
@@ -18,16 +19,15 @@ class Home extends Component {
 
   handleChange = ({ target }) => {
     const { name } = target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const values = target.type === 'checkbox' ? target.checked : target.value;
 
-    this.setState({ [name]: value });
+    this.setState({ [name]: values });
   };
 
   handleSearchButton = async () => {
-    const { inputSearch } = this.state;
-
-    const result = await getProductsFromCategoryAndQuery('', inputSearch);
-
+    const { inputSearch, categories } = this.state;
+    const result = await getProductsFromCategoryAndQuery(categories, inputSearch);
+    console.log(result);
     this.setState({ result, isEmpty: false });
   };
 
@@ -85,7 +85,13 @@ class Home extends Component {
             apiReturn.map((category) => (
               <label data-testid="category" key={ category.id } htmlFor="categories">
                 { category.name }
-                <input type="radio" name="categories" id="" />
+                <input
+                  onChange={ this.handleChange }
+                  type="radio"
+                  name="categories"
+                  value={ category.id }
+                  onClick={ () => this.handleSearchButton() }
+                />
               </label>
             ))
           }
